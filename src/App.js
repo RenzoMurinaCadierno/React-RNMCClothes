@@ -42,10 +42,10 @@ class App extends React.Component {
                 ...snapshot.data()
               }
             }
-            ,
+            // ,
             // setstate is async, to check it after a change,
             // remember to pass a callback to it!
-            () => console.log(this.state)
+            // () => console.log(this.state)
           )
         })
       
