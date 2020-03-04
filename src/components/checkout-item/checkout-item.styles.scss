@@ -26,14 +26,22 @@
   .remove {
     width: 8%;
     text-align: center;
-  }
-
-  // .quantity {
-  //   padding-left: 20px;
-  // }
-
-  .remove-button {
-    padding-left: 12px;
     cursor: pointer;
   }
+
+  .quantity {
+    
+    .arrow {
+      cursor: pointer;
+    }
+
+    .value {
+      margin: 0 10px;
+    }
+  }
+
+  // .remove-button {
+  //   padding-left: 12px;
+  //   cursor: pointer;
+  // }
 }
