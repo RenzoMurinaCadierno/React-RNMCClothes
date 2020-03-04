@@ -1,6 +1,9 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
+import { createStructuredSelector } from 'reselect'
+import { selectCartHidden } from '../../redux/cart/cart.selectors'
+import { selectCurrentUser } from '../../redux/user/user.selector'
 import { auth } from '../../firebase/firebase.utils'
 import { ReactComponent as Logo } from '../../assets/crown.svg'
 import CartIcon from '../cart-icon/cart-icon.component'
@@ -33,15 +36,10 @@ const Header = ({ currentUser, hidden }) => (
   </div>
 )
 
-// the state we are passed here is the root reducer (state)
-// we know that state holds user object, and that user object
-// has currentUser inside. Same goes for cart: hidden state.
-// So we can nest destructure those two properties like this:
-const mapStateToProps = ({ user: { currentUser }, cart: { hidden } }) => ({
+const mapStateToProps = createStructuredSelector({
   
-  // and instead of doing currentUser: currentUser, ES6, do one.
-  currentUser,
-  hidden
+  currentUser: selectCurrentUser,
+  hidden: selectCartHidden
 })
 
 export default connect(mapStateToProps)(Header)
