@@ -1,9 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { CollectionItemContainer, ImageContainer, CollectionFooterContainer,
-  NameContainer, PriceContainer, CustomButtonContainer } from './collection-item.styles'
+// import CustomButton from '../custom-button/custom-button.component'
+import { CustomButtonContainer } from '../custom-button/custom-button.styles'
 import { addItem } from '../../redux/cart/cart.actions'
-// import './collection-item.styles.scss'
+import './collection-item.styles.scss'
 
 // we no longer destructure props here, we get the whole item
 const CollectionItem = ({ item, addItem }) => {
@@ -11,15 +11,15 @@ const CollectionItem = ({ item, addItem }) => {
   const { name, price, imageUrl } = item  // destructure here
 
   return (
-    <CollectionItemContainer>
-      <ImageContainer
+    <div className='collection-item'>
+      <div
         className='image'
         style={{ backgroundImage: `url(${imageUrl})` }}
       />
-      <CollectionFooterContainer>
-        <NameContainer> { name } </NameContainer>
-        <PriceContainer> { price } </PriceContainer>
-      </CollectionFooterContainer>
+      <div className='collection-footer'>
+        <span className='name'> {name} </span>
+        <span className='price'> {price} </span>
+      </div>
       <CustomButtonContainer
         className='custom-button'
         onClick={() => addItem(item)}   // here we need item
@@ -27,7 +27,7 @@ const CollectionItem = ({ item, addItem }) => {
       > 
         Add to cart 
       </CustomButtonContainer>
-    </CollectionItemContainer>
+    </div>
   )
 }
 
