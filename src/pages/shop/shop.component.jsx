@@ -5,8 +5,19 @@ import { updateCollections } from '../../redux/shop/shop.actions'
 import { firestore, convertCollectionsSnapshotToMap } from '../../firebase/firebase.utils'
 import CollectionsOverview from '../../components/collections-overview/collections-overview.component'
 import CollectionPage from '../collection/collection.component'
+import WithSpinner from '../../components/with-spinner/with-spinner.component'
+
+// Make two new component which will sent to withSpinner.
+// If data from FB was not received yet, withspinner will render the
+// spinner. Otherwise, it will render the respective wrapped components
+const CollectionsOverviewWithSpinner = WithSpinner(CollectionsOverview)
+const CollectionPageWithSpinner = WithSpinner(CollectionPage)
 
 class ShopPage extends React.Component {
+
+  state = {         // this is the same as doing constructor()
+    loading: true   // super() and this.state = { loading: true }
+  }
 
   // set the unsubscribe variable we will use when unmounting
   unsubscribeFromSnapshot = null
@@ -34,23 +45,37 @@ class ShopPage extends React.Component {
       // dispatch the action on the returned collectionMap (collKey:
       // coll obj), to update it with new values
       updateCollections(collectionsMap)
+
+      // collections retrieved, set loading to false, which re-renders 
+      // the WithSpinner components above, which in place render the 
+      // correct components (not the spinner)
+      this.setState({ loading: false })
     })
   }
 
   render() {
 
-    // get the match from the received props
+    // get the match from the received props, and loading from state
     const { match } = this.props
+    const { loading } = this.state
 
     return (
       <div className='shop-page'>
         <Route 
-          exact path={ `${ match.path }` }  // shop/ wherever it is
-          component={ CollectionsOverview } // which makes comp reusable! 
+          exact path={ `${ match.path }` }
+          render={ (props) => 
+            <CollectionsOverviewWithSpinner 
+              isLoading={ loading } { ...props }
+            /> 
+          } 
         />
         <Route 
           path={ `${match.path}/:collectionId`} 
-          component={ CollectionPage }
+          render={ (props) => 
+            <CollectionPageWithSpinner 
+              isLoading={ loading } { ...props }
+            />
+          }
         />
       </div>
     )

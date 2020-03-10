@@ -9,7 +9,11 @@ export const selectCollections = createSelector(
 
 export const selectCollectionsForPreview = createSelector(
   [selectCollections],
-  collections => Object.keys(collections).map(key => collections[key])
+  collections => collections 
+  ? 
+    Object.keys(collections).map(key => collections[key])
+  :
+    []    // empty array if no collections found in initial state
 )
 
 // bring up shop.collections using [selectCollections],
@@ -23,5 +27,10 @@ export const selectCollectionsForPreview = createSelector(
 export const selectCollection = collectionUrlParam =>
   createSelector(
     [selectCollections],
-    collections => collections[collectionUrlParam]
+    collections => collections 
+    ?
+      collections[collectionUrlParam]
+    :
+      null    // return null if no collections exist at init state,
+              // which renders an empty state
     )

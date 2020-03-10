@@ -70,7 +70,10 @@ class App extends React.Component {
         'collections', 
         collectionsArray.map( ({ title, items }) => ({ title, items }) )
       ) */
-    })
+    
+    // firebase error observable callback 
+    // }, error => console.log(error))
+    }
   }
 
   componentWillUnmount() {
