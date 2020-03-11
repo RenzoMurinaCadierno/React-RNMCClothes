@@ -34,3 +34,18 @@ export const selectCollection = collectionUrlParam =>
       null    // return null if no collections exist at init state,
               // which renders an empty state
     )
+
+// a selector to return if the shop collection is fetching info
+export const selectIsCollectionFetching = createSelector(
+  [selectShop],
+  shop => shop.isFetching
+)
+
+// a selector to checj if the get request to Firebase finished
+// loading. We use !! to convert the returned shop.collections
+// to its boolean value. If the return is null, it will be false.
+// If the return is the object with the collections, it is true
+export const selectIsCollectionsLoaded = createSelector(
+  [selectShop],
+  shop => !!shop.collections
+)

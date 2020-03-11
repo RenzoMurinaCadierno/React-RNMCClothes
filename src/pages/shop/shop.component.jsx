@@ -1,91 +1,122 @@
 import React from 'react'
 import { Route } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { updateCollections } from '../../redux/shop/shop.actions'
-import { firestore, convertCollectionsSnapshotToMap } from '../../firebase/firebase.utils'
-import CollectionsOverview from '../../components/collections-overview/collections-overview.component'
-import CollectionPage from '../collection/collection.component'
-import WithSpinner from '../../components/with-spinner/with-spinner.component'
-
-// Make two new component which will sent to withSpinner.
-// If data from FB was not received yet, withspinner will render the
-// spinner. Otherwise, it will render the respective wrapped components
-const CollectionsOverviewWithSpinner = WithSpinner(CollectionsOverview)
-const CollectionPageWithSpinner = WithSpinner(CollectionPage)
+import { fetchCollectionsStartAsync } from '../../redux/shop/shop.actions'
+// import { firestore, convertCollectionsSnapshotToMap } from '../../firebase/firebase.utils'
+import CollectionsOverviewContainer from '../../components/collections-overview/collections-overview.container'
+import CollectionPageContainer from '../../pages/collection/collection.container'
 
 class ShopPage extends React.Component {
 
-  state = {         // this is the same as doing constructor()
-    loading: true   // super() and this.state = { loading: true }
-  }
-
-  // set the unsubscribe variable we will use when unmounting
-  unsubscribeFromSnapshot = null
-
   componentDidMount() {
 
-    // destructure updateCollections action from props coming 
-    // from redux below
-    const { updateCollections } = this.props 
+    // destructure the async redux action from props
+    const { fetchCollectionsStartAsync } = this.props
 
-    // bring the 'collections' collection reference from firestore
-    const collectionRef = firestore.collection('collections')
-  
-    // whenever the reference updates or when the component mounts,
-    // onSnapshot() will send us a snapshot from it. Since the object
-    // we need to use is inside this snapshot, then we need to await
-    // for the answer before proceeding.
-    collectionRef.onSnapshot( async snapshot => {
-
-      // from the snapshot, convert each QuerySnapshot in the array
-      // in docs to the objects we need to render. Explanation in
-      // firebase.utils.js
-      const collectionsMap = convertCollectionsSnapshotToMap(snapshot)
-
-      // dispatch the action on the returned collectionMap (collKey:
-      // coll obj), to update it with new values
-      updateCollections(collectionsMap)
-
-      // collections retrieved, set loading to false, which re-renders 
-      // the WithSpinner components above, which in place render the 
-      // correct components (not the spinner)
-      this.setState({ loading: false })
-    })
+    // call for it
+    fetchCollectionsStartAsync()
   }
+
 
   render() {
 
     // get the match from the received props, and loading from state
     const { match } = this.props
-    const { loading } = this.state
 
     return (
       <div className='shop-page'>
         <Route 
-          exact path={ `${ match.path }` }
-          render={ (props) => 
-            <CollectionsOverviewWithSpinner 
-              isLoading={ loading } { ...props }
-            /> 
-          } 
+          exact 
+          path={ `${ match.path }` }
+          component={ CollectionsOverviewContainer }
         />
         <Route 
           path={ `${match.path}/:collectionId`} 
-          render={ (props) => 
-            <CollectionPageWithSpinner 
-              isLoading={ loading } { ...props }
-            />
-          }
+          component={ CollectionPageContainer }
         />
       </div>
     )
   }
 } 
 
+// we now only need fetchCollectionsStartAsync from actions 
 const mapDispatchToProps = dispatch => ({
-
-  updateCollections: collectionsMap => 
-    dispatch(updateCollections(collectionsMap))
+  fetchCollectionsStartAsync: () => dispatch(fetchCollectionsStartAsync())
 })
 
 export default connect(null, mapDispatchToProps)(ShopPage)
+
+
+
+// BEFORE REDUX THUNK
+
+// class ShopPage extends React.Component {
+
+//   // // NO LONGER NEEDED FOR REDUX THUNK
+//   // state = {         // this is the same as doing constructor()
+//   //   loading: true   // super() and this.state = { loading: true }
+//   // }
+//   //
+//   // set the unsubscribe variable we will use when unmounting
+//   // unsubscribeFromSnapshot = null
+//   // // NO LONGER NEEDED FOR REDUX THUNK
+
+//   componentDidMount() {
+
+     // destructure the async redux action from props
+    //  const { fetchCollectionsStartAsync } = this.props
+
+     // call for it
+    //  fetchCollectionsStartAsync()
+
+    // NO LONGER NEEDED FOR REDUX THUNK
+    //
+    // // destructure updateCollections action from props coming 
+    // // from redux below
+    // const { updateCollections } = this.props 
+
+    // // bring the 'collections' collection reference from firestore
+    // const collectionRef = firestore.collection('collections')
+  
+
+    // // // ** OBSERVER PATTERN TO HANDLE FIREBASE CALLS ** 
+
+    // // // whenever the reference updates or when the component mounts,
+    // // // onSnapshot() will send us a snapshot from it. Since the object
+    // // // we need to use is inside this snapshot, then we need to await
+    // // // for the answer before proceeding.
+    // // collectionRef.onSnapshot( async snapshot => {
+
+    // //   // from the snapshot, convert each QuerySnapshot in the array
+    // //   // in docs to the objects we need to render. Explanation in
+    // //   // firebase.utils.js
+    // //   const collectionsMap = convertCollectionsSnapshotToMap(snapshot)
+
+    // //   // dispatch the action on the returned collectionMap (collKey:
+    // //   // coll obj), to update it with new values
+    // //   updateCollections(collectionsMap)
+
+    // //   // collections retrieved, set loading to false, which re-renders 
+    // //   // the WithSpinner components above, which in place render the 
+    // //   // correct components (not the spinner)
+    // //   this.setState({ loading: false })
+    // // })
+
+
+    // //   // ** NATIVE FETCH TO HANDLE FIREBASE CALLS **
+    // //   //
+    // //   fetch('https://firestore.googleapis.com/v1/projects/rnmc-clothing/databases/(default)/documents')
+    // //     .then( res => res.json() )
+    // //     .then( collections => console.log(collections) ) 
+    // // }
+
+
+    // // ** PROMISES PATTERN TO HANDLE FIREBASE CALLS **
+
+    // collectionRef.get().then( snapshot => {
+    
+    //   const collectionsMap = convertCollectionsSnapshotToMap(snapshot)
+    //   updateCollections(collectionsMap)
+    //   this.setState({ loading: false })
+    // })
+  // }

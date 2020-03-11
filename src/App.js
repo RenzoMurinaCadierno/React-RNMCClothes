@@ -73,7 +73,7 @@ class App extends React.Component {
     
     // firebase error observable callback 
     // }, error => console.log(error))
-    }
+    })
   }
 
   componentWillUnmount() {
