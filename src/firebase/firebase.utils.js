@@ -128,18 +128,34 @@ export const convertCollectionsSnapshotToMap = collections => {
   }, {} )   // start from an empty object
 }
 
+// we need to mimic the functionality of firebase to listen to
+// user Auth changes, so we add it here. It is Promise based
+// because Sagas work that way with yield
+export const getCurrentUser = () => {
+
+  return new Promise( (resolve, reject ) => {
+
+    // listen to changes and as soon as you get one, unsubscribe
+    const unsubscribe = auth.onAuthStateChanged( userAuth => {
+      unsubscribe()
+      resolve(userAuth)
+
+    }, reject)
+  })
+}
+
 export const auth = firebase.auth()
 export const firestore = firebase.firestore()
 
 // bring google authentication up
-const provider = new firebase.auth.GoogleAuthProvider()
+export const googleProvider = new firebase.auth.GoogleAuthProvider()
 
 // always bring the prompt window to select an account
 // when user tries to sign in or up with google
-provider.setCustomParameters({ prompt: 'select_account' })
+googleProvider.setCustomParameters({ prompt: 'select_account' })
 
 // export that functionality, which links to a popup
-export const signInWithGoogle = () => auth.signInWithPopup(provider)
+export const signInWithGoogle = () => auth.signInWithPopup(googleProvider)
 
 // export firebase as default in case we need to use any of
 // the other methods outside of it
