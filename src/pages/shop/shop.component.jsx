@@ -1,42 +1,32 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Route } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { fetchCollectionsStart } from '../../redux/shop/shop.actions'
-// import { firestore, convertCollectionsSnapshotToMap } from '../../firebase/firebase.utils'
 import CollectionsOverviewContainer from '../../components/collections-overview/collections-overview.container'
 import CollectionPageContainer from '../../pages/collection/collection.container'
 
-class ShopPage extends React.Component {
+const ShopPage = ({ fetchCollectionsStart, match }) => {
 
-  componentDidMount() {
+  useEffect( () => {
 
-    // destructure the async redux action from props
-    const { fetchCollectionsStart } = this.props
-
-    // call for it
     fetchCollectionsStart()
-  }
+  
+  }, [fetchCollectionsStart])
 
-  render() {
-
-    // get the match from the received props, and loading from state
-    const { match } = this.props
-
-    return (
-      <div className='shop-page'>
-        <Route 
-          exact 
-          path={ `${ match.path }` }
-          component={ CollectionsOverviewContainer }
-        />
-        <Route 
-          path={ `${match.path}/:collectionId`} 
-          component={ CollectionPageContainer }
-        />
-      </div>
-    )
-  }
-} 
+  return (
+    <div className='shop-page'>
+      <Route 
+        exact 
+        path={ `${ match.path }` }
+        component={ CollectionsOverviewContainer }
+      />
+      <Route 
+        path={ `${match.path}/:collectionId`} 
+        component={ CollectionPageContainer }
+      />
+    </div>
+  )
+}
 
 // we now only need fetchCollectionsStartAsync from actions 
 const mapDispatchToProps = dispatch => ({
