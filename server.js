@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const path = require('path')
+const compression = require('compression')
 
 
 // SERVER CONFIGS 
@@ -19,6 +20,9 @@ const port = process.env.PORT || 5000
 
 
 // MIDDLEWARES
+
+// everything will be gzipped IRT
+app.use(compression())
 
 // each res/req will be converted to JSON
 app.use(bodyParser.json())
