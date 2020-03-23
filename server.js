@@ -3,6 +3,7 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const path = require('path')
 const compression = require('compression')
+const enforce = require('express-sslify')
 
 
 // SERVER CONFIGS 
@@ -30,6 +31,13 @@ app.use(bodyParser.json())
 // url strings in/out will not contain invalid characters
 app.use(bodyParser.urlencoded({ extended: true }))
 
+// Enforce all request to be converted to https://
+// Heroku runs a reverse proxy to forge unencrypted HTTP 
+// traffic to it, which HIDES the headers (so, Heroku does
+// not know if the request comes from HTTP).
+// trustProtoHeader tells Heroku to pass those requests 
+app.use(enforce.HTTPS({ trustProtoHeader: true }))
+
 // if a req/res is being sent to a different server, it is
 // cancelled by default. This applies to ports too.
 // CORS will allow our localhost:3000 (frontend) to our
@@ -40,6 +48,9 @@ app.use(cors())
 // HEROKU PRODUCTION ENVIRONMENT
 
 if (process.env.NODE_ENV === 'production') {
+
+  // make the app compatible with HTTP as well as HTTPS
+  app.use(enforce.HTTPS({ trustProtoHeader: true }));
 
   // serve all static files in client/build folder (HTML/CSS/JS)  
   // (which is automatically built by package.json)
@@ -63,6 +74,14 @@ app.listen(port, error => {
 
 
 // ROUTING
+
+// if service-worker.js is requested (PWA, browsers)
+app.get('/service-worker.js', (req, res) => {
+
+  // direct them to the file. From client, up one folder,
+  // then into build, and there you have the file.
+  res.sendFile(path.resolve(__dirname, '..', 'build', 'service-worker.js'))
+})
 
 app.post('/payment', (req, res) => {
 
