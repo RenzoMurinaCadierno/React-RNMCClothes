@@ -17,7 +17,7 @@ const Header = ({ currentUser, hidden, signoutStart }) => (
     </LogoContainer>
     <OptionsContainer>
       <OptionLink to='/shop'> SHOP </OptionLink>
-      <OptionLink to='https://www.linkedin.com/in/renzomurinacadierno/'> CONTACT </OptionLink>
+      <OptionLink to='/'> CONTACT </OptionLink>
       {
         currentUser ?
         <OptionLink as='div' onClick={ signoutStart }>
