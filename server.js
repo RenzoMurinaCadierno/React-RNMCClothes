@@ -22,9 +22,6 @@ const port = process.env.PORT || 5000
 
 // MIDDLEWARES
 
-// everything will be gzipped IRT
-app.use(compression())
-
 // each res/req will be converted to JSON
 app.use(bodyParser.json())
 
@@ -48,6 +45,9 @@ app.use(cors())
 // HEROKU PRODUCTION ENVIRONMENT
 
 if (process.env.NODE_ENV === 'production') {
+
+  // everything will be gzipped IRT
+  app.use(compression())
 
   // make the app compatible with HTTP as well as HTTPS
   app.use(enforce.HTTPS({ trustProtoHeader: true }));
